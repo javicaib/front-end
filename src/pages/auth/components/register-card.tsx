@@ -11,14 +11,17 @@ import { Label } from "@/components/ui/label";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import axiosClient from "@/services/axios.services";
+import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 
 function RegisterCard() {
   const [boder, setBorder] = useState("");
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
 
     // Get Inputs from Form event
     const { elements } = event.currentTarget;
@@ -56,6 +59,7 @@ function RegisterCard() {
       password.value = "";
       password2.value = "";
       setBorder("border-red-600");
+      return;
     }
     try {
       const data = axiosClient
@@ -82,9 +86,10 @@ function RegisterCard() {
           toast({
             title: "Ha ocurrido un error",
             description: error.message,
-            variant: "default",
+            variant: "destructive",
           });
-        });
+        })
+        .finally(() => setLoading(false));
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -147,7 +152,14 @@ function RegisterCard() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button>Registrarse</Button>
+          {loading ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Registrando
+            </Button>
+          ) : (
+            <Button>Registrase</Button>
+          )}
         </CardFooter>
       </form>
     </Card>
