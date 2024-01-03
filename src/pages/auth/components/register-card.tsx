@@ -8,9 +8,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import axiosClient from "@/services/axios.services";
+import React, { useState } from "react";
 
 function RegisterCard() {
+  const [boder, setBorder] = useState("");
+  const { toast } = useToast();
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -46,17 +52,51 @@ function RegisterCard() {
     const isPasswordInput2 = password2 instanceof HTMLInputElement;
     // Validate if is null
     if (!isPasswordInput2 || password2 === null) return;
-    console.log(
-      name.value,
-      lastName.value,
-      email.value,
-      password.value,
-      password2.value
-    );
+    if (password.value !== password2.value) {
+      password.value = "";
+      password2.value = "";
+      setBorder("border-red-600");
+    }
+    try {
+      const data = axiosClient
+        .post("/users/create", {
+          name: name.value,
+          lastName: lastName.value,
+          password: password.value,
+          password2: password2.value,
+          email: email.value,
+        })
+        .then(() => {
+          name.value = "";
+          lastName.value = "";
+          password.value = "";
+          password2.value = "";
+          email.value = "";
+          toast({
+            title: "Usuario creado correctamente",
+            description: "",
+            variant: "default",
+          });
+        })
+        .catch((error) => {
+          toast({
+            title: "Ha ocurrido un error",
+            description: error.message,
+            variant: "default",
+          });
+        });
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleOnChange = () => {
+    setBorder("");
   };
 
   return (
     <Card>
+      <Toaster />
       <form onSubmit={handleSubmit}>
         <CardHeader>
           <CardDescription>Todos campos con (*) son requeridos</CardDescription>
@@ -85,6 +125,8 @@ function RegisterCard() {
               type="password"
               placeholder="********"
               autoComplete="current-password"
+              className={boder}
+              onChange={handleOnChange}
             />
           </div>
           <div className="space-y-1">
@@ -94,7 +136,14 @@ function RegisterCard() {
               type="password"
               placeholder="********"
               autoComplete="current-password"
+              className={boder}
+              onChange={handleOnChange}
             />
+            {boder !== "" && (
+              <pre className="text-3sm text-red-600 font-mono font-bold px-2">
+                Las contrasenas deben coincidir
+              </pre>
+            )}
           </div>
         </CardContent>
         <CardFooter className="flex justify-center">
