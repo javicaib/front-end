@@ -22,7 +22,7 @@ function LoginCard() {
             <Input
               id="email"
               type="email"
-              placeholder="Escriba su correo electronico"
+              placeholder="federico.valverde@rmadrid.com"
             />
           </div>
           <div className="space-y-1">
@@ -30,7 +30,8 @@ function LoginCard() {
             <Input
               id="password"
               type="password"
-              placeholder="Escriba su contrasena"
+              placeholder="********"
+              autoComplete="current-passwor"
             />
           </div>
         </CardContent>
