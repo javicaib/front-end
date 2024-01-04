@@ -62,7 +62,7 @@ function RegisterCard() {
       return;
     }
     try {
-      const data = axiosClient
+      axiosClient
         .post("/users/create", {
           name: name.value,
           lastName: lastName.value,
@@ -78,7 +78,7 @@ function RegisterCard() {
           email.value = "";
           toast({
             title: "Usuario creado correctamente",
-            description: "",
+            description: "Ahora puede iniciar sesion",
             variant: "default",
           });
         })
@@ -90,7 +90,6 @@ function RegisterCard() {
           });
         })
         .finally(() => setLoading(false));
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
